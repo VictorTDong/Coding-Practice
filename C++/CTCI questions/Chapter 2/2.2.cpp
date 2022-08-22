@@ -1,25 +1,25 @@
 /*
-Remove Dups
+Return kth to last element
 
-    algorithm:
-        iterate through a linked list
-        if dup is found make prev = curr.next
-        else you go on to next node
-
-    we can keep track of the data by using a set to store the data that we have kept track of
+        alogrithm:
+            base case:
+                if k == 0, return the tail
+            
+            recursive case:
+                go through the linked list till the end
+                then on the recursive calls, add 1 to counter until kth element is equal to counter
+                return the current node
 */
 
 #include <iostream>
-#include <set>
 
 class Node
 {
     public:
         int value;
         Node* next;
-        Node* prev;
 
-        Node(int v) : value(v), next(nullptr), prev(nullptr) {}
+        Node(int v) : value(v), next(nullptr) {}
 };
 
 class LinkedList
@@ -35,34 +35,6 @@ class LinkedList
             tail = nullptr;
         }
 
-        void removeDup()
-        {
-            std::set<int> duplicate;
-
-            if (head == nullptr) return;
-            
-            Node* curr = head;
-
-            while(curr)
-            {
-                if(duplicate.find(curr->value) != duplicate.end())
-                {
-                    Node* temp = curr;
-                    curr->prev->next = curr->next;
-                    if(curr->next != nullptr)
-                    {
-                        curr->next->prev = curr->prev;
-                    }
-                    delete temp;
-                }
-                else
-                {
-                    duplicate.insert(curr->value);
-                }
-                curr = curr->next;
-            }
-        }
-
         void append(int value)
         {
             Node *node = new Node(value);
@@ -75,7 +47,6 @@ class LinkedList
             else
             {
                 tail->next = node;
-                node->prev = tail;
                 tail = node;
             }
         }
@@ -101,6 +72,34 @@ class LinkedList
             }
         }
 
+        Node* kthElement(int& counter, int k)
+        {
+            if(head == nullptr) return nullptr;
+
+            Node* temp = head;
+
+            head = head->next;
+            Node* curr = kthElement(counter, k);
+
+            counter += 1;
+
+            if(counter == k)
+            {
+                return temp;
+            }
+
+            return curr;
+        }
+
+        Node* kthElement(int k)
+        {
+            int counter = 0;
+            
+            if(k == 0) return tail;
+
+            return kthElement(counter, k);
+        }
+
         ~LinkedList()
         {
             Node *curr;
@@ -117,9 +116,6 @@ class LinkedList
         }
 };
 
-
-
-
 int main()
 {
     LinkedList list;
@@ -130,24 +126,13 @@ int main()
     list.append(4);
     list.append(5);
     list.append(6);
-    list.append(1);
-    list.append(2);
-    list.append(3);
-    list.append(5);
-    list.append(6);
-    list.append(1);
-    list.append(2);
-    list.append(3);
-    list.append(6);
-    list.append(4);
-    list.append(5);
-    list.append(6);
 
     std::cout << "The original list is: "; 
     list.print();
-    
-    list.removeDup();
 
-    std::cout << "The updated list should be: [1, 2, 3, 4, 5, 6]" << std::endl << "New list: "; 
-    list.print();
+    Node* node = list.kthElement(1);
+
+    std::cout << node->value;
+
+    return 0;
 }
