@@ -76,7 +76,7 @@ class LinkedList
         {
             if(node == nullptr || node->next == nullptr)
             {
-                return nullptr;
+                return node;
             }
 
             Node* temp = node->next;
